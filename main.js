@@ -127,7 +127,7 @@ function setupCameraControls() {
 // --- Load GLTF Model Function ---
 function loadModel() {
   const loader = new THREE.GLTFLoader();
-  const modelPath = '/assets/tensor.glb';
+  const modelPath = 'https://bunqlabs.github.io/eyecandy/assets/tensor.glb';
 
   loader.load(
     modelPath,
