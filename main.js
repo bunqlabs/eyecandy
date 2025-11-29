@@ -15,11 +15,11 @@ const cameraViews = {
     target: new THREE.Vector3(0, 3, 1),
   },
   'camera-view-2': {
-    position: new THREE.Vector3(0, 2, 8),
+    position: new THREE.Vector3(0, 3, 15),
     target: new THREE.Vector3(0, 0, 0),
   },
   'camera-view-3': {
-    position: new THREE.Vector3(4, 1, 0),
+    position: new THREE.Vector3(15, 3, 0),
     target: new THREE.Vector3(0, 0, 0),
   },
 };
