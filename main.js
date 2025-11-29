@@ -10,15 +10,15 @@ const container = document.getElementById('scene-container');
 // Define camera views
 const cameraViews = {
   'camera-view-1': {
-    position: new THREE.Vector3(7, 9, 4),
+    position: new THREE.Vector3(7, 7, 4),
     target: new THREE.Vector3(0, 3, 1),
   },
   'camera-view-2': {
-    position: new THREE.Vector3(0, 3, 15),
+    position: new THREE.Vector3(-12, -4, 6),
     target: new THREE.Vector3(0, 0, 0),
   },
   'camera-view-3': {
-    position: new THREE.Vector3(15, 3, 0),
+    position: new THREE.Vector3(15, 3, -6),
     target: new THREE.Vector3(0, 0, 0),
   },
 };
