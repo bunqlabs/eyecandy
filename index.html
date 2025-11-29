@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js Post-Processing & GUI</title>
+    <!-- Load Tailwind CSS for styling the container and UI elements -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom styles for the 3D container */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* Hide scrollbars */
+        font-family: 'Inter', sans-serif;
+      }
+      #scene-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      /* Ensure the canvas fills the container */
+      canvas {
+        display: block;
+      }
+    </style>
+    <!-- Load Core Three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Load OrbitControls library -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Load Post-Processing Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+
+    <!-- Load Specific Shaders for Effects -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FilmShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/DotScreenShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/RGBShiftShader.js"></script>
+
+    <!-- Load dat.gui for the debug panel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"></script>
+
+    <!-- Load GLTFLoader for 3D model import -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <!-- NEW: Load GSAP for smooth camera animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body class="text-white">
+    <!-- Container for the 3D scene -->
+    <div id="scene-container"></div>
+
+    <!-- NEW: Camera Controls Overlay (bottom center) -->
+    <div
+      class="absolute bottom-4 left-1/2 transform -translate-x-1/2 p-3 bg-gray-800 bg-opacity-80 rounded-xl shadow-2xl z-10 flex space-x-4 border-2 border-blue-500"
+    >
+      <button
+        id="camera-view-1"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-150 shadow-md uppercase text-sm tracking-wider"
+      >
+        View 1: High
+      </button>
+      <button
+        id="camera-view-2"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-150 shadow-md uppercase text-sm tracking-wider"
+      >
+        View 2: Front
+      </button>
+      <button
+        id="camera-view-3"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-150 shadow-md uppercase text-sm tracking-wider"
+      >
+        View 3: Side
+      </button>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
