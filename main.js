@@ -195,6 +195,7 @@ function init() {
   camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
   camera.position.copy(initialView.position);
   camera.lookAt(initialView.target);
+  adjustCameraFov();
 
   // 3. Renderer Setup
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -265,6 +266,8 @@ function animate() {
 
   const delta = clock.getDelta();
 
+  console.log('Camera fov = ', camera.fov);
+
   if (controls) {
     controls.update();
   }
@@ -292,6 +295,7 @@ function onWindowResize() {
   const width = container.clientWidth;
   const height = container.clientHeight;
 
+  adjustCameraFov();
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
@@ -299,6 +303,16 @@ function onWindowResize() {
   if (composer) {
     composer.setSize(width, height);
   }
+}
+
+// Tune FOV for smaller viewports to keep framing consistent
+function adjustCameraFov() {
+  if (window.innerWidth <= 1024) {
+    camera.fov = 70;
+  } else {
+    camera.fov = 50;
+  }
+  camera.updateProjectionMatrix();
 }
 
 // --- Start the Scene ---
