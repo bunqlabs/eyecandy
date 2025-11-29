@@ -110,8 +110,8 @@ function setupCameraControls() {
 // --- Load GLTF Model Function ---
 function loadModel() {
   const loader = new THREE.GLTFLoader();
-  // const modelPath = 'https://bunqlabs.github.io/eyecandy/assets/tensor.glb';
-  const modelPath = "/assets/tensor.glb";
+  const modelPath = "https://bunqlabs.github.io/eyecandy/assets/tensor.glb";
+  // const modelPath = "/assets/tensor.glb";
 
   loader.load(
     modelPath,
@@ -253,21 +253,24 @@ function init() {
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   pmremGenerator.compileEquirectangularShader();
 
-  new THREE.EXRLoader().load("/assets/environment.exr", (texture) => {
-    // --- NEW: Rotate the environment map ---
-    // We can rotate the texture before it's converted to an envmap.
-    // A 90-degree rotation (in radians) will effectively tilt the environment.
-    texture.rotation = Math.PI / 2;
-    texture.center.set(0.5, 0.5); // Ensure rotation is around the center
+  new THREE.EXRLoader().load(
+    "https://bunqlabs.github.io/eyecandy/assets/environment.exr",
+    (texture) => {
+      // --- NEW: Rotate the environment map ---
+      // We can rotate the texture before it's converted to an envmap.
+      // A 90-degree rotation (in radians) will effectively tilt the environment.
+      texture.rotation = Math.PI / 2;
+      texture.center.set(0.5, 0.5); // Ensure rotation is around the center
 
-    // The EXR file provides realistic ambient lighting and reflections.
-    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-    scene.environment = envMap;
+      // The EXR file provides realistic ambient lighting and reflections.
+      const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+      scene.environment = envMap;
 
-    // Clean up to free memory
-    texture.dispose();
-    pmremGenerator.dispose();
-  });
+      // Clean up to free memory
+      texture.dispose();
+      pmremGenerator.dispose();
+    }
+  );
 
   // Directional light for casting shadows
   const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
