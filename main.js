@@ -1,6 +1,5 @@
 // Global variables for the scene elements
-let scene, camera, renderer, model, controls, composer, gui;
-let filmPass, dotScreenPass, rgbShiftPass; // Post-processing passes
+let scene, camera, renderer, model, controls, gui;
 // Animation variables
 let mixer;
 let clock;
@@ -27,42 +26,13 @@ const cameraViews = {
 // State object for the GUI controls
 const params = {
   enableCubeRotation: false,
-  enableFilm: false,
-  enableDotScreen: false,
-  enableRGBShift: false,
 };
 
 // --- GUI Setup Function ---
 function setupGUI() {
   if (gui) gui.destroy();
 
-  gui = new dat.GUI({ title: 'Post-Processing Toggles', width: 250 });
-
-  // Effect Toggles Folder
-  const effectsFolder = gui.addFolder('Effects');
-
-  effectsFolder
-    .add(params, 'enableFilm')
-    .name('Film (Noise/Scanlines)')
-    .onChange((value) => {
-      filmPass.enabled = value;
-    });
-
-  effectsFolder
-    .add(params, 'enableDotScreen')
-    .name('Dot Screen (Halftone)')
-    .onChange((value) => {
-      dotScreenPass.enabled = value;
-    });
-
-  effectsFolder
-    .add(params, 'enableRGBShift')
-    .name('RGB Shift (Chromatic)')
-    .onChange((value) => {
-      rgbShiftPass.enabled = value;
-    });
-
-  effectsFolder.open();
+  gui = new dat.GUI({ title: 'Debug', width: 250 });
 
   // Model Control Folder
   const modelFolder = gui.addFolder('Model');
@@ -74,6 +44,19 @@ function setupGUI() {
       .name('Model Spin (Animated)').domElement.style.pointerEvents = 'none';
   }
   modelFolder.open();
+
+  // Hide panel by default; toggle with Shift+D
+  toggleGui(false);
+  window.addEventListener('keydown', (e) => {
+    if (e.shiftKey && e.code === 'KeyD') {
+      toggleGui(gui.domElement.style.display === 'none');
+    }
+  });
+}
+
+function toggleGui(show) {
+  if (!gui) return;
+  gui.domElement.style.display = show ? 'block' : 'none';
 }
 
 // --- NEW: GSAP Camera Controls Setup ---
@@ -224,33 +207,7 @@ function init() {
   controls.target.copy(initialView.target);
   controls.update();
 
-  // 7. Post-Processing Setup
-  composer = new THREE.EffectComposer(renderer);
-
-  const renderPass = new THREE.RenderPass(scene, camera);
-  composer.addPass(renderPass);
-
-  // Film Pass
-  filmPass = new THREE.ShaderPass(THREE.FilmShader);
-  filmPass.uniforms['nIntensity'].value = 0.5;
-  filmPass.uniforms['sIntensity'].value = 0.1;
-  filmPass.uniforms['sCount'].value = 512;
-  filmPass.enabled = params.enableFilm;
-  composer.addPass(filmPass);
-
-  // Dot Screen Pass
-  dotScreenPass = new THREE.ShaderPass(THREE.DotScreenShader);
-  dotScreenPass.uniforms['scale'].value = 4;
-  dotScreenPass.enabled = params.enableDotScreen;
-  composer.addPass(dotScreenPass);
-
-  // RGB Shift Pass
-  rgbShiftPass = new THREE.ShaderPass(THREE.RGBShiftShader);
-  rgbShiftPass.uniforms['amount'].value = 0.005;
-  rgbShiftPass.enabled = params.enableRGBShift;
-  composer.addPass(rgbShiftPass);
-
-  // 8. GUI Setup is called after model load/fail
+  // 7. GUI Setup is called after model load/fail
   setupGUI();
 
   // 9. Setup GSAP camera button controls
@@ -281,13 +238,8 @@ function animate() {
     model.rotation.y += 0.01;
   }
 
-  // Render the scene using the composer
-  if (composer) {
-    composer.render();
-  } else {
-    // Fallback rendering
-    renderer.render(scene, camera);
-  }
+  // Render the scene
+  renderer.render(scene, camera);
 }
 
 // --- Responsiveness Handling ---
@@ -300,9 +252,6 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(width, height);
-  if (composer) {
-    composer.setSize(width, height);
-  }
 }
 
 // Tune FOV for smaller viewports to keep framing consistent
