@@ -122,6 +122,17 @@ function loadModel() {
       model.scale.set(5, 5, 5);
       model.position.y = -1;
       model.rotation.y = -Math.PI / 2;
+
+      // Replace all materials with a standard material
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            side: THREE.DoubleSide,
+          });
+        }
+      });
+
       scene.add(model);
 
       mixer = new THREE.AnimationMixer(model);
@@ -193,7 +204,7 @@ function init() {
   // 5. Lighting Setup
   // const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
   // scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
   directionalLight.position.set(5, 5, 5);
   scene.add(directionalLight);
 
