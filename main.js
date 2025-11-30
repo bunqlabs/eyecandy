@@ -1,3 +1,4 @@
+console.log("main.js loaded");
 // Imports removed. Using globals from vendor.js
 // THREE, OrbitControls, GLTFLoader, EXRLoader, GUI, gsap are now global.
 
