@@ -54,6 +54,35 @@
       background: #1d4ed8;
       transform: translateY(-2px);
     }
+
+    .color-controls {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(31, 41, 55, 0.85);
+      border-radius: 0.75rem;
+      border: 2px solid #2563eb;
+      z-index: 10;
+    }
+
+    .color-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .color-button:hover {
+      transform: scale(1.1);
+      border-color: #fff;
+    }
   </style>
 
   <script src="./vendor.js"></script>
@@ -66,6 +95,15 @@
     <button id="camera-view-1" class="camera-button">View 1: High</button>
     <button id="camera-view-2" class="camera-button">View 2: Front</button>
     <button id="camera-view-3" class="camera-button">View 3: Side</button>
+  </div>
+
+  <div class="color-controls">
+    <button class="color-button" data-color="#ffffff" style="background-color: #ffffff;" title="White"></button>
+    <button class="color-button" data-color="#333333" style="background-color: #333333;" title="Dark Grey"></button>
+    <button class="color-button" data-color="#68601F" style="background-color: #68601F;" title="Olive"></button>
+    <button class="color-button" data-color="#FFBB1E" style="background-color: #FFBB1E;" title="Yellow"></button>
+    <button class="color-button" data-color="#FF6C31" style="background-color: #FF6C31;" title="Orange"></button>
+    <button class="color-button" data-color="#D98EED" style="background-color: #D98EED;" title="Lavender"></button>
   </div>
 
   <script src="./postprocessing.js"></script>

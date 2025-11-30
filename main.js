@@ -1,4 +1,3 @@
-console.log("main.js loaded");
 // Imports removed. Using globals from vendor.js
 // THREE, OrbitControls, GLTFLoader, EXRLoader, GUI, gsap are now global.
 
@@ -89,6 +88,23 @@ function setupCameraControls() {
         z: view.target.z,
         ease: "power2.inOut",
         onUpdate: () => controls.update(),
+      });
+    });
+  });
+}
+
+function setupColorControls() {
+  const buttons = document.querySelectorAll(".color-button");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const colorHex = button.getAttribute("data-color");
+      if (!model) return;
+
+      model.traverse((child) => {
+        if (child.isMesh && child.material && child.material.name === "White_Custom") {
+          child.material.color.set(colorHex);
+        }
       });
     });
   });
@@ -219,6 +235,7 @@ function init() {
 
   setupGUI();
   setupCameraControls();
+  setupColorControls();
 
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 100),

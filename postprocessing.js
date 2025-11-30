@@ -1,7 +1,6 @@
 // Imports removed. Using globals from vendor.js
 // THREE, EffectComposer, RenderPass, OutputPass, GTAOPass are now global.
 
-console.log("postprocessing.js loaded");
 window.setupPostProcessing = function (scene, camera, renderer) {
   const size = new THREE.Vector2();
   renderer.getSize(size);
