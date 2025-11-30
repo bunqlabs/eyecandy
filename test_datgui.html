@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test dat.gui</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "dat.gui": "https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js"
+        }
+      }
+    </script>
+</head>
+
+<body>
+    <script type="module">
+        import * as dat from "dat.gui";
+        console.log("dat.gui exports:", dat);
+        try {
+            const gui = new dat.GUI();
+            console.log("new dat.GUI() worked");
+        } catch (e) {
+            console.error("new dat.GUI() failed:", e);
+        }
+
+        import GUI from "dat.gui";
+        console.log("default export:", GUI);
+        try {
+            const gui2 = new GUI();
+            console.log("new GUI() worked");
+        } catch (e) {
+            console.error("new GUI() failed:", e);
+        }
+    </script>
+</body>
+
+</html>
