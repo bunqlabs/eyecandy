@@ -1,0 +1,26 @@
+{
+  "name": "eyecandy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bunqlabs/eyecandy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bunqlabs/eyecandy/issues"
+  },
+  "homepage": "https://github.com/bunqlabs/eyecandy#readme",
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "lil-gui": "^0.21.0",
+    "three": "^0.181.2"
+  }
+}

@@ -1,10 +1,7 @@
-import * as THREE from "three";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
+// Imports removed. Using globals from vendor.js
+// THREE, EffectComposer, RenderPass, OutputPass, GTAOPass are now global.
 
-export function setupPostProcessing(scene, camera, renderer) {
+window.setupPostProcessing = function (scene, camera, renderer) {
   const size = new THREE.Vector2();
   renderer.getSize(size);
 

@@ -1,12 +1,7 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
+// Imports removed. Using globals from vendor.js
+// THREE, OrbitControls, GLTFLoader, EXRLoader, GUI, gsap are now global.
 
-import GUI from "lil-gui";
 
-import gsap from "gsap";
-import { setupPostProcessing } from "./postprocessing.js";
 
 // Global variables
 let scene, camera, renderer, model, controls, gui, postProcessingPipeline;
@@ -187,7 +182,7 @@ function init() {
   container.appendChild(renderer.domElement);
 
   // Initialize Post Processing (Passes setup via postprocessing.js)
-  postProcessingPipeline = setupPostProcessing(scene, camera, renderer);
+  postProcessingPipeline = window.setupPostProcessing(scene, camera, renderer);
 
   loadModel();
 
