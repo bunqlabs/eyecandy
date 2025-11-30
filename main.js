@@ -127,7 +127,7 @@ function loadModel() {
       });
 
       const newBlackMaterial = new THREE.MeshStandardMaterial({
-        color: 0x2f2b08,
+        color: 0x333333,
         roughness: 0.3,
         side: THREE.DoubleSide,
         name: "Black_Custom",
