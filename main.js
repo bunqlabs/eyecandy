@@ -2,7 +2,7 @@
 // THREE, OrbitControls, GLTFLoader, EXRLoader, GUI, gsap are now global.
 
 // Global variables
-let scene, camera, renderer, model, controls, gui, postProcessingPipeline;
+let scene, camera, renderer, model, controls, gui;
 let mixer, clock;
 let isCubeFallback = false;
 
@@ -52,6 +52,9 @@ function setupGUI() {
     }
   });
 }
+
+const desktopCamFov = 50;
+const mobileCamFov = 80;
 
 function setupCameraControls() {
   const buttons = [
@@ -131,8 +134,8 @@ function loadModel() {
       });
 
       const newBlackMaterial = new THREE.MeshStandardMaterial({
-        color: 0x333333,
-        roughness: 0.3,
+        color: 0x777777,
+        roughness: 0.4,
         side: THREE.DoubleSide,
         name: 'Black_Custom',
       });
@@ -188,39 +191,45 @@ function init() {
 
   const aspect = container.clientWidth / container.clientHeight;
   const initialView = cameraViews['camera-view-1'];
-  camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
+
+  // ---------- FIX FOV ON LOAD ----------
+  const isMobile = window.innerWidth <= 1024;
+  const fov = isMobile ? mobileCamFov : desktopCamFov;
+
+  camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
   camera.position.copy(initialView.position);
   camera.lookAt(initialView.target);
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setClearColor(0x000000, 0); // Ensure alpha is 0
+  renderer.setClearColor(0x000000, 0);
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
+
+  // Keep tone mapping (ACESFilmic is excellent)
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.8;
+
   renderer.shadowMap.enabled = true;
 
   container.appendChild(renderer.domElement);
 
-  // Initialize Post Processing (Passes setup via postprocessing.js)
-  postProcessingPipeline = window.setupPostProcessing(scene, camera, renderer);
-
   loadModel();
 
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  pmremGenerator.compileEquirectangularShader();
+  // Environment map (EXR → PMREM)
+  // const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  // pmremGenerator.compileEquirectangularShader();
 
-  new EXRLoader().load(
-    'https://bunqlabs.github.io/eyecandy/assets/environment.exr',
-    (texture) => {
-      texture.rotation = Math.PI / 2;
-      texture.center.set(0.5, 0.5);
-      const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-      scene.environment = envMap;
-      texture.dispose();
-      pmremGenerator.dispose();
-    }
-  );
+  // new EXRLoader().load(
+  //   'https://bunqlabs.github.io/eyecandy/assets/environment.exr',
+  //   (texture) => {
+  //     texture.rotation = Math.PI / 2;
+  //     texture.center.set(0.5, 0.5);
+  //     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+  //     scene.environment = envMap;
+  //     texture.dispose();
+  //     pmremGenerator.dispose();
+  //   }
+  // );
 
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
   directionalLight.position.set(-1, 5, 5);
@@ -228,6 +237,10 @@ function init() {
   directionalLight.shadow.mapSize.set(1024, 1024);
   directionalLight.shadow.bias = -0.0005;
   scene.add(directionalLight);
+
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+  hemiLight.position.set(0, 20, 0);
+  scene.add(hemiLight);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -264,29 +277,21 @@ function animate() {
     model.rotation.y += 0.01;
   }
 
-  if (postProcessingPipeline) {
-    postProcessingPipeline.render();
-  } else {
-    renderer.render(scene, camera);
-  }
+  renderer.render(scene, camera);
 }
 
 function onWindowResize() {
   const width = container.clientWidth;
   const height = container.clientHeight;
+  const aspect = width / height;
 
-  if (window.innerWidth <= 1024) camera.fov = 70;
-  else camera.fov = 50;
+  const isMobile = window.innerWidth <= 1024;
+  camera.fov = isMobile ? mobileCamFov : desktopCamFov;
 
-  camera.aspect = width / height;
+  camera.aspect = aspect;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
-
-  if (postProcessingPipeline) {
-    postProcessingPipeline.resize(width, height);
-  }
 }
 
-// Start
 init();
 animate();
