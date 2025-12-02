@@ -172,10 +172,6 @@ function loadModel() {
       params.enableCubeRotation = true;
     }
   );
-
-  requestAnimationFrame(() => {
-    hideLoaderSmoothly();
-  });
 }
 
 function init() {
@@ -329,44 +325,47 @@ function onWindowResize() {
   }
 }
 
-function hideLoaderSmoothly() {
-  const loader = document.getElementById('loader');
-  if (!loader) return;
+function hideLoaderWhenReady() {
+  let checks = 0;
+  const maxChecks = 100; // safety limit (~1.6s at 60fps)
 
-  // 1. Force GPU layer + will-change (critical!)
-  loader.style.willChange = 'transform';
-  loader.style.transform = 'translateZ(0)'; // promote to GPU layer
+  function check() {
+    checks++;
 
-  // 2. Ensure it's visible and at starting position
-  loader.style.display = 'block';
-  loader.style.opacity = '1';
-  loader.style.transform = 'translateY(0)';
+    // Condition 1: Model is loaded
+    // Condition 2: At least one frame has been rendered (canvas has content)
+    const canvas = renderer.domElement;
+    const hasContent = canvas && canvas.offsetHeight > 0; // canvas is in DOM and visible
+    const modelReady = !!model; // model exists (even fallback cube counts)
 
-  // 3. Force reflow (critical for transition to register)
-  void loader.offsetHeight;
+    if (modelReady && hasContent && checks < maxChecks) {
+      // Optional: wait one extra frame so first render is complete
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const loader = document.getElementById('loader');
+          if (!loader) return;
 
-  // 4. Trigger the smooth exit
-  loader.style.transition =
-    'transform 1.1s cubic-bezier(0.32, 0, 0.08, 1), opacity 0.9s ease-out';
-  loader.style.transform = 'translateY(-100%)';
-  loader.style.opacity = '0';
+          loader.style.transform = 'translateY(-100%)';
 
-  // 5. Clean up ONLY after transition ends (never use display:none mid-transition)
-  const onEnd = () => {
-    loader.style.display = 'none';
-    loader.style.willChange = 'auto';
-    loader.removeEventListener('transitionend', onEnd);
-  };
-  loader.addEventListener('transitionend', onEnd);
-
-  // Safety fallback
-  setTimeout(() => {
-    if (loader.style.display !== 'none') {
-      loader.style.display = 'none';
-      loader.style.willChange = 'auto';
+          const onEnd = () => {
+            loader.style.display = 'none';
+            loader.removeEventListener('transitionend', onEnd);
+          };
+          loader.addEventListener('transitionend', onEnd);
+        }, 500); // ← exactly 0.5 second delay
+      });
+    } else if (checks < maxChecks) {
+      requestAnimationFrame(check);
+    } else {
+      // Fallback: force hide after timeout (in case something went wrong)
+      const loader = document.getElementById('loader');
+      if (loader) loader.style.display = 'none';
     }
-  }, 1500);
+  }
+
+  requestAnimationFrame(check);
 }
 
 init();
 animate();
+hideLoaderWhenReady();
