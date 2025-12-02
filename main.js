@@ -1,8 +1,25 @@
-// Imports removed. Using globals from vendor.js
-// THREE, OrbitControls, GLTFLoader, EXRLoader, GUI, gsap are now global.
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/GLTFLoader.js';
+import { EXRLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/EXRLoader.js';
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/RenderPass.js';
+import { OutputPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/OutputPass.js';
+import { GTAOPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/GTAOPass.js';
+
+// Expose to window
+window.THREE = THREE;
+window.OrbitControls = OrbitControls;
+window.GLTFLoader = GLTFLoader;
+window.EXRLoader = EXRLoader;
+window.EffectComposer = EffectComposer;
+window.RenderPass = RenderPass;
+window.OutputPass = OutputPass;
+window.GTAOPass = GTAOPass;
+window.gsap = gsap;
 
 // Global variables
-let scene, camera, renderer, model, controls, gui;
+let scene, camera, renderer, model, controls;
 let mixer, clock;
 let isCubeFallback = false;
 
@@ -27,31 +44,6 @@ const cameraViews = {
 const params = {
   enableCubeRotation: false,
 };
-
-function setupGUI() {
-  if (gui) gui.destroy();
-  gui = new GUI({ title: 'Debug', width: 250 });
-
-  const modelFolder = gui.addFolder('Model');
-  if (isCubeFallback) {
-    modelFolder.add(params, 'enableCubeRotation').name('Rotate Fallback Cube');
-  } else {
-    modelFolder
-      .add({ spin: false }, 'spin')
-      .name('Model Spin (Animated)').domElement.style.pointerEvents = 'none';
-  }
-  modelFolder.open();
-
-  // Initial GUI state
-  gui.domElement.style.display = 'none';
-
-  window.addEventListener('keydown', (e) => {
-    if (e.shiftKey && e.code === 'KeyD') {
-      gui.domElement.style.display =
-        gui.domElement.style.display === 'none' ? 'block' : 'none';
-    }
-  });
-}
 
 const desktopCamFov = 50;
 const mobileCamFov = 80;
@@ -168,8 +160,6 @@ function loadModel() {
       if (gltf.animations.length > 0) {
         mixer.clipAction(gltf.animations[0]).play();
       }
-
-      setupGUI();
     },
     undefined,
     (error) => {
@@ -180,7 +170,6 @@ function loadModel() {
       scene.add(model);
       isCubeFallback = true;
       params.enableCubeRotation = true;
-      setupGUI();
     }
   );
 }
@@ -250,7 +239,6 @@ function init() {
   controls.target.copy(initialView.target);
   controls.update();
 
-  setupGUI();
   setupCameraControls();
   setupColorControls();
 
