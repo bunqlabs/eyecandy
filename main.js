@@ -196,7 +196,7 @@ function init() {
 
   // Keep tone mapping (ACESFilmic is excellent)
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.8;
+  renderer.toneMappingExposure = 1.6;
 
   renderer.shadowMap.enabled = true;
   renderer.autoClear = false; // Required for EffectComposer
