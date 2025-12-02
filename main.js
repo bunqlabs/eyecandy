@@ -19,7 +19,7 @@ window.GTAOPass = GTAOPass;
 window.gsap = gsap;
 
 // Global variables
-let scene, camera, renderer, model, controls;
+let scene, camera, renderer, model, controls, composer;
 let mixer, clock;
 let isCubeFallback = false;
 
@@ -199,8 +199,42 @@ function init() {
   renderer.toneMappingExposure = 1.8;
 
   renderer.shadowMap.enabled = true;
+  renderer.autoClear = false; // Required for EffectComposer
 
   container.appendChild(renderer.domElement);
+
+  // Post-processing setup with GTAO
+  const renderSize = new THREE.Vector2();
+  renderer.getSize(renderSize);
+  const dpr = renderer.getPixelRatio();
+
+  const gtaoParams = {
+    width: renderSize.width * dpr,
+    height: renderSize.height * dpr,
+    kernelRadius: 8,
+    minResolution: 4,
+    outputMode: 0, // 0: Default (beauty + AO)
+    maxSamples: 32,
+    luminanceInfluence: 0.7,
+    radius: 5,
+    scale: 1.0,
+    bias: 0.5,
+    intensity: 1.0,
+    color: new THREE.Color(0x000000),
+    cameraNear: camera.near,
+    cameraFar: camera.far,
+    cameraFov: (camera.fov * Math.PI) / 180,
+  };
+
+  composer = new EffectComposer(renderer);
+  const renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
+
+  const gtaoPass = new GTAOPass(scene, camera, gtaoParams);
+  composer.addPass(gtaoPass);
+
+  const outputPass = new OutputPass();
+  composer.addPass(outputPass);
 
   loadModel();
 
@@ -265,7 +299,11 @@ function animate() {
     model.rotation.y += 0.01;
   }
 
-  renderer.render(scene, camera);
+  if (composer) {
+    composer.render();
+  } else {
+    renderer.render(scene, camera);
+  }
 }
 
 function onWindowResize() {
@@ -279,6 +317,12 @@ function onWindowResize() {
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
+
+  if (composer) {
+    composer.setSize(width, height);
+    const dpr = renderer.getPixelRatio();
+    composer.passes[1].uniforms.resolution.value.set(width * dpr, height * dpr); // Update GTAOPass resolution
+  }
 }
 
 init();
