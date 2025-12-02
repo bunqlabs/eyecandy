@@ -1,11 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/GLTFLoader.js';
-import { EXRLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/EXRLoader.js';
-import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/RenderPass.js';
-import { OutputPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/OutputPass.js';
-import { GTAOPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/GTAOPass.js';
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/GLTFLoader.js";
+import { EXRLoader } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/EXRLoader.js";
+import { EffectComposer } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/RenderPass.js";
+import { OutputPass } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/OutputPass.js";
+import { GTAOPass } from "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/GTAOPass.js";
 
 // Expose to window
 window.THREE = THREE;
@@ -23,19 +23,19 @@ let scene, camera, renderer, model, controls, composer;
 let mixer, clock;
 let isCubeFallback = false;
 
-const container = document.getElementById('scene-container');
+const container = document.getElementById("scene-container");
 
 // Camera Views (THREE is now defined because we imported it)
 const cameraViews = {
-  'camera-view-1': {
+  "camera-view-1": {
     position: new THREE.Vector3(8, 7, 5),
     target: new THREE.Vector3(0, 2.5, 1),
   },
-  'camera-view-2': {
+  "camera-view-2": {
     position: new THREE.Vector3(-12, -4, 6),
     target: new THREE.Vector3(0, 0, 0),
   },
-  'camera-view-3': {
+  "camera-view-3": {
     position: new THREE.Vector3(15, 3, -6),
     target: new THREE.Vector3(0, 0, 0),
   },
@@ -50,13 +50,13 @@ const mobileCamFov = 80;
 
 function setupCameraControls() {
   const buttons = [
-    document.getElementById('camera-view-1'),
-    document.getElementById('camera-view-2'),
-    document.getElementById('camera-view-3'),
+    document.getElementById("camera-view-1"),
+    document.getElementById("camera-view-2"),
+    document.getElementById("camera-view-3"),
   ];
 
   buttons.forEach((button) => {
-    button.addEventListener('click', () => {
+    button.addEventListener("click", () => {
       const view = cameraViews[button.id];
       if (!view) return;
 
@@ -67,7 +67,7 @@ function setupCameraControls() {
         x: view.position.x,
         y: view.position.y,
         z: view.position.z,
-        ease: 'power2.inOut',
+        ease: "power2.inOut",
         onUpdate: () => camera.updateProjectionMatrix(),
         onComplete: () => {
           controls.enabled = true;
@@ -79,7 +79,7 @@ function setupCameraControls() {
         x: view.target.x,
         y: view.target.y,
         z: view.target.z,
-        ease: 'power2.inOut',
+        ease: "power2.inOut",
         onUpdate: () => controls.update(),
       });
     });
@@ -87,18 +87,18 @@ function setupCameraControls() {
 }
 
 function setupColorControls() {
-  const buttons = document.querySelectorAll('.color-button');
+  const buttons = document.querySelectorAll(".color-button");
 
   buttons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const colorHex = button.getAttribute('data-color');
+    button.addEventListener("click", () => {
+      const colorHex = button.getAttribute("data-color");
       if (!model) return;
 
       model.traverse((child) => {
         if (
           child.isMesh &&
           child.material &&
-          child.material.name === 'White_Custom'
+          child.material.name === "White_Custom"
         ) {
           child.material.color.set(colorHex);
         }
@@ -110,8 +110,9 @@ function setupColorControls() {
 function loadModel() {
   const loader = new GLTFLoader();
   const modelPath =
-    'https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb';
+    "https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb";
   // const modelPath = 'assets/gltf_export_trimmed_materials_baked_lights.glb';
+  const progressBar = document.getElementById("progress-bar");
 
   loader.load(
     modelPath,
@@ -122,32 +123,32 @@ function loadModel() {
         color: 0xff6c31,
         roughness: 0.6,
         side: THREE.DoubleSide,
-        name: 'White_Custom',
+        name: "White_Custom",
       });
 
       const newBlackMaterial = new THREE.MeshStandardMaterial({
         color: 0x777777,
         roughness: 0.4,
         side: THREE.DoubleSide,
-        name: 'Black_Custom',
+        name: "Black_Custom",
       });
 
       const newEyeMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
         emissiveIntensity: 10,
-        name: 'Eye_Custom',
+        name: "Eye_Custom",
       });
 
       model.traverse((child) => {
         if (child.isMesh && child.material) {
           child.castShadow = true;
           child.receiveShadow = true;
-          if (child.material.name === 'White')
+          if (child.material.name === "White")
             child.material = newWhiteMaterial;
-          if (child.material.name === 'Black')
+          if (child.material.name === "Black")
             child.material = newBlackMaterial;
-          if (child.material.name === 'Eye') child.material = newEyeMaterial;
+          if (child.material.name === "Eye") child.material = newEyeMaterial;
         }
       });
 
@@ -161,9 +162,14 @@ function loadModel() {
         mixer.clipAction(gltf.animations[0]).play();
       }
     },
-    undefined,
+    (xhr) => {
+      if (xhr.lengthComputable && progressBar) {
+        const percentComplete = (xhr.loaded / xhr.total) * 100;
+        progressBar.style.width = percentComplete + "%";
+      }
+    },
     (error) => {
-      console.error('Model load error:', error);
+      console.error("Model load error:", error);
       const geometry = new THREE.BoxGeometry(1, 1, 1);
       const material = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
       model = new THREE.Mesh(geometry, material);
@@ -179,7 +185,7 @@ function init() {
   scene = new THREE.Scene();
 
   const aspect = container.clientWidth / container.clientHeight;
-  const initialView = cameraViews['camera-view-1'];
+  const initialView = cameraViews["camera-view-1"];
 
   // ---------- FIX FOV ON LOAD ----------
   const isMobile = window.innerWidth <= 1024;
@@ -285,7 +291,7 @@ function init() {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  window.addEventListener('resize', onWindowResize);
+  window.addEventListener("resize", onWindowResize);
 }
 
 function animate() {
@@ -342,24 +348,24 @@ function hideLoaderWhenReady() {
       // Optional: wait one extra frame so first render is complete
       requestAnimationFrame(() => {
         setTimeout(() => {
-          const loader = document.getElementById('loader');
+          const loader = document.getElementById("loader");
           if (!loader) return;
 
-          loader.style.transform = 'translateY(-100%)';
+          loader.style.transform = "translateY(-100%)";
 
           const onEnd = () => {
-            loader.style.display = 'none';
-            loader.removeEventListener('transitionend', onEnd);
+            loader.style.display = "none";
+            loader.removeEventListener("transitionend", onEnd);
           };
-          loader.addEventListener('transitionend', onEnd);
+          loader.addEventListener("transitionend", onEnd);
         }, 500); // ← exactly 0.5 second delay
       });
     } else if (checks < maxChecks) {
       requestAnimationFrame(check);
     } else {
       // Fallback: force hide after timeout (in case something went wrong)
-      const loader = document.getElementById('loader');
-      if (loader) loader.style.display = 'none';
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "none";
     }
   }
 
