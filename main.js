@@ -115,8 +115,8 @@ function setupColorControls() {
 function loadModel() {
   const loader = new GLTFLoader();
   const modelPath =
-    'https://bunqlabs.github.io/eyecandy/assets/tensor_materials_baked.glb';
-  // const modelPath = 'assets/tensor_materials_baked.glb';
+    'https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb';
+  // const modelPath = 'assets/gltf_export_trimmed_materials_baked_lights.glb';
 
   loader.load(
     modelPath,
@@ -196,8 +196,8 @@ function init() {
   renderer.setClearColor(0x000000, 0); // Ensure alpha is 0
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.8;
+  renderer.toneMapping = THREE.CineonToneMapping;
+  renderer.toneMappingExposure = 1.7;
   renderer.shadowMap.enabled = true;
 
   container.appendChild(renderer.domElement);
@@ -242,7 +242,7 @@ function init() {
   setupColorControls();
 
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(100, 100),
+    new THREE.PlaneGeometry(200, 200),
     new THREE.ShadowMaterial({ opacity: 0.3 })
   );
   ground.rotation.x = -Math.PI / 2;
