@@ -196,8 +196,8 @@ function init() {
   renderer.setClearColor(0x000000, 0); // Ensure alpha is 0
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.toneMapping = THREE.CineonToneMapping;
-  renderer.toneMappingExposure = 1.7;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.8;
   renderer.shadowMap.enabled = true;
 
   container.appendChild(renderer.domElement);
