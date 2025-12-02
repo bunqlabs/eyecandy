@@ -48,6 +48,8 @@ const params = {
 const desktopCamFov = 50;
 const mobileCamFov = 80;
 
+const progressBar = document.getElementById("progress-bar");
+
 function setupCameraControls() {
   const buttons = [
     document.getElementById("camera-view-1"),
@@ -112,7 +114,6 @@ function loadModel() {
   const modelPath =
     "https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb";
   // const modelPath = 'assets/gltf_export_trimmed_materials_baked_lights.glb';
-  const progressBar = document.getElementById("progress-bar");
 
   loader.load(
     modelPath,
