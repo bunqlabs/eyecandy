@@ -165,7 +165,7 @@ function loadModel() {
     },
     (xhr) => {
       if (xhr.lengthComputable && progressBar) {
-        const percentComplete = (xhr.loaded / xhr.total) * 75;
+        const percentComplete = (xhr.loaded / xhr.total) * 100;
         progressBar.style.width = percentComplete + "%";
       }
     },
@@ -333,8 +333,6 @@ function onWindowResize() {
 }
 
 function hideLoaderWhenReady() {
-  progressBar.style.width = percentComplete + "%";
-
   let checks = 0;
   const maxChecks = 100; // safety limit (~1.6s at 60fps)
 
@@ -346,6 +344,11 @@ function hideLoaderWhenReady() {
     const canvas = renderer.domElement;
     const hasContent = canvas && canvas.offsetHeight > 0; // canvas is in DOM and visible
     const modelReady = !!model; // model exists (even fallback cube counts)
+
+    // Once the model is loaded, set progress to 100%
+    if (modelReady && progressBar.style.width !== "100%") {
+      progressBar.style.width = "100%";
+    }
 
     if (modelReady && hasContent && checks < maxChecks) {
       // Optional: wait one extra frame so first render is complete
