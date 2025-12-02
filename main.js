@@ -115,8 +115,8 @@ function setupColorControls() {
 function loadModel() {
   const loader = new GLTFLoader();
   const modelPath =
-    'https://bunqlabs.github.io/eyecandy/assets/tensor_materials.glb';
-  // const modelPath = 'assets/tensor_materials.glb';
+    'https://bunqlabs.github.io/eyecandy/assets/tensor_materials_baked.glb';
+  // const modelPath = 'assets/tensor_materials_baked.glb';
 
   loader.load(
     modelPath,
