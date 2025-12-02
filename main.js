@@ -343,8 +343,6 @@ function hideLoaderWhenReady() {
       requestAnimationFrame(() => {
         const loader = document.getElementById('loader');
         if (loader) {
-          loader.style.transition =
-            'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
           loader.style.transform = 'translateY(-100%)';
 
           loader.addEventListener('transitionend', function handler() {
