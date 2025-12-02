@@ -341,15 +341,20 @@ function hideLoaderWhenReady() {
     if (modelReady && hasContent && checks < maxChecks) {
       // Optional: wait one extra frame so first render is complete
       requestAnimationFrame(() => {
-        const loader = document.getElementById('loader');
-        if (loader) {
+        setTimeout(() => {
+          const loader = document.getElementById('loader');
+          if (!loader) return;
+
+          loader.style.transition =
+            'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
           loader.style.transform = 'translateY(-100%)';
 
-          loader.addEventListener('transitionend', function handler() {
+          const onEnd = () => {
             loader.style.display = 'none';
-            loader.removeEventListener('transitionend', handler);
-          });
-        }
+            loader.removeEventListener('transitionend', onEnd);
+          };
+          loader.addEventListener('transitionend', onEnd);
+        }, 500); // ← exactly 0.5 second delay
       });
     } else if (checks < maxChecks) {
       requestAnimationFrame(check);
