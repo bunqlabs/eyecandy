@@ -43,7 +43,7 @@ function setupGUI() {
   modelFolder.open();
 
   // Initial GUI state
-  // gui.domElement.style.display = "none";
+  gui.domElement.style.display = 'none';
 
   window.addEventListener('keydown', (e) => {
     if (e.shiftKey && e.code === 'KeyD') {
