@@ -28,12 +28,12 @@ const container = document.getElementById("scene-container");
 // Camera Views (THREE is now defined because we imported it)
 const cameraViews = {
   "camera-view-1": {
-    position: new THREE.Vector3(8, 7, 5),
-    target: new THREE.Vector3(0, 2.5, 1),
-  },
-  "camera-view-2": {
     position: new THREE.Vector3(-12, -4, 6),
     target: new THREE.Vector3(0, 0, 0),
+  },
+  "camera-view-2": {
+    position: new THREE.Vector3(8, 7, 5),
+    target: new THREE.Vector3(0, 2.5, 1),
   },
   "camera-view-3": {
     position: new THREE.Vector3(15, 3, -6),
