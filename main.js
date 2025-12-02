@@ -164,7 +164,7 @@ function loadModel() {
     },
     (xhr) => {
       if (xhr.lengthComputable && progressBar) {
-        const percentComplete = (xhr.loaded / xhr.total) * 100;
+        const percentComplete = (xhr.loaded / xhr.total) * 75;
         progressBar.style.width = percentComplete + "%";
       }
     },
@@ -332,6 +332,8 @@ function onWindowResize() {
 }
 
 function hideLoaderWhenReady() {
+  progressBar.style.width = percentComplete + "%";
+
   let checks = 0;
   const maxChecks = 100; // safety limit (~1.6s at 60fps)
 
