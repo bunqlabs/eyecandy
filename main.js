@@ -1,26 +1,24 @@
 // Imports removed. Using globals from vendor.js
 // THREE, OrbitControls, GLTFLoader, EXRLoader, GUI, gsap are now global.
 
-
-
 // Global variables
 let scene, camera, renderer, model, controls, gui, postProcessingPipeline;
 let mixer, clock;
 let isCubeFallback = false;
 
-const container = document.getElementById("scene-container");
+const container = document.getElementById('scene-container');
 
 // Camera Views (THREE is now defined because we imported it)
 const cameraViews = {
-  "camera-view-1": {
+  'camera-view-1': {
     position: new THREE.Vector3(7, 7, 4),
     target: new THREE.Vector3(0, 3, 1),
   },
-  "camera-view-2": {
+  'camera-view-2': {
     position: new THREE.Vector3(-12, -4, 6),
     target: new THREE.Vector3(0, 0, 0),
   },
-  "camera-view-3": {
+  'camera-view-3': {
     position: new THREE.Vector3(15, 3, -6),
     target: new THREE.Vector3(0, 0, 0),
   },
@@ -32,38 +30,38 @@ const params = {
 
 function setupGUI() {
   if (gui) gui.destroy();
-  gui = new GUI({ title: "Debug", width: 250 });
+  gui = new GUI({ title: 'Debug', width: 250 });
 
-  const modelFolder = gui.addFolder("Model");
+  const modelFolder = gui.addFolder('Model');
   if (isCubeFallback) {
-    modelFolder.add(params, "enableCubeRotation").name("Rotate Fallback Cube");
+    modelFolder.add(params, 'enableCubeRotation').name('Rotate Fallback Cube');
   } else {
     modelFolder
-      .add({ spin: false }, "spin")
-      .name("Model Spin (Animated)").domElement.style.pointerEvents = "none";
+      .add({ spin: false }, 'spin')
+      .name('Model Spin (Animated)').domElement.style.pointerEvents = 'none';
   }
   modelFolder.open();
 
   // Initial GUI state
   // gui.domElement.style.display = "none";
 
-  window.addEventListener("keydown", (e) => {
-    if (e.shiftKey && e.code === "KeyD") {
+  window.addEventListener('keydown', (e) => {
+    if (e.shiftKey && e.code === 'KeyD') {
       gui.domElement.style.display =
-        gui.domElement.style.display === "none" ? "block" : "none";
+        gui.domElement.style.display === 'none' ? 'block' : 'none';
     }
   });
 }
 
 function setupCameraControls() {
   const buttons = [
-    document.getElementById("camera-view-1"),
-    document.getElementById("camera-view-2"),
-    document.getElementById("camera-view-3"),
+    document.getElementById('camera-view-1'),
+    document.getElementById('camera-view-2'),
+    document.getElementById('camera-view-3'),
   ];
 
   buttons.forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener('click', () => {
       const view = cameraViews[button.id];
       if (!view) return;
 
@@ -74,7 +72,7 @@ function setupCameraControls() {
         x: view.position.x,
         y: view.position.y,
         z: view.position.z,
-        ease: "power2.inOut",
+        ease: 'power2.inOut',
         onUpdate: () => camera.updateProjectionMatrix(),
         onComplete: () => {
           controls.enabled = true;
@@ -86,7 +84,7 @@ function setupCameraControls() {
         x: view.target.x,
         y: view.target.y,
         z: view.target.z,
-        ease: "power2.inOut",
+        ease: 'power2.inOut',
         onUpdate: () => controls.update(),
       });
     });
@@ -94,15 +92,19 @@ function setupCameraControls() {
 }
 
 function setupColorControls() {
-  const buttons = document.querySelectorAll(".color-button");
+  const buttons = document.querySelectorAll('.color-button');
 
   buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const colorHex = button.getAttribute("data-color");
+    button.addEventListener('click', () => {
+      const colorHex = button.getAttribute('data-color');
       if (!model) return;
 
       model.traverse((child) => {
-        if (child.isMesh && child.material && child.material.name === "White_Custom") {
+        if (
+          child.isMesh &&
+          child.material &&
+          child.material.name === 'White_Custom'
+        ) {
           child.material.color.set(colorHex);
         }
       });
@@ -112,7 +114,9 @@ function setupColorControls() {
 
 function loadModel() {
   const loader = new GLTFLoader();
-  const modelPath = "https://bunqlabs.github.io/eyecandy/assets/tensor.glb";
+  const modelPath =
+    'https://bunqlabs.github.io/eyecandy/assets/tensor_materials.glb';
+  // const modelPath = 'assets/tensor_materials.glb';
 
   loader.load(
     modelPath,
@@ -120,35 +124,35 @@ function loadModel() {
       model = gltf.scene;
 
       const newWhiteMaterial = new THREE.MeshStandardMaterial({
-        color: 0xFF6C31,
+        color: 0xff6c31,
         roughness: 0.6,
         side: THREE.DoubleSide,
-        name: "White_Custom",
+        name: 'White_Custom',
       });
 
       const newBlackMaterial = new THREE.MeshStandardMaterial({
         color: 0x333333,
         roughness: 0.3,
         side: THREE.DoubleSide,
-        name: "Black_Custom",
+        name: 'Black_Custom',
       });
 
       const newEyeMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
         emissiveIntensity: 10,
-        name: "Eye_Custom",
+        name: 'Eye_Custom',
       });
 
       model.traverse((child) => {
         if (child.isMesh && child.material) {
           child.castShadow = true;
           child.receiveShadow = true;
-          if (child.material.name === "White")
+          if (child.material.name === 'White')
             child.material = newWhiteMaterial;
-          if (child.material.name === "Black")
+          if (child.material.name === 'Black')
             child.material = newBlackMaterial;
-          if (child.material.name === "Eye") child.material = newEyeMaterial;
+          if (child.material.name === 'Eye') child.material = newEyeMaterial;
         }
       });
 
@@ -166,7 +170,7 @@ function loadModel() {
     },
     undefined,
     (error) => {
-      console.error("Model load error:", error);
+      console.error('Model load error:', error);
       const geometry = new THREE.BoxGeometry(1, 1, 1);
       const material = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
       model = new THREE.Mesh(geometry, material);
@@ -183,7 +187,7 @@ function init() {
   scene = new THREE.Scene();
 
   const aspect = container.clientWidth / container.clientHeight;
-  const initialView = cameraViews["camera-view-1"];
+  const initialView = cameraViews['camera-view-1'];
   camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
   camera.position.copy(initialView.position);
   camera.lookAt(initialView.target);
@@ -207,7 +211,7 @@ function init() {
   pmremGenerator.compileEquirectangularShader();
 
   new EXRLoader().load(
-    "https://bunqlabs.github.io/eyecandy/assets/environment.exr",
+    'https://bunqlabs.github.io/eyecandy/assets/environment.exr',
     (texture) => {
       texture.rotation = Math.PI / 2;
       texture.center.set(0.5, 0.5);
@@ -246,7 +250,7 @@ function init() {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  window.addEventListener("resize", onWindowResize);
+  window.addEventListener('resize', onWindowResize);
 }
 
 function animate() {
