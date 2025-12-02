@@ -325,28 +325,46 @@ function onWindowResize() {
   }
 }
 
-function pageLoaded() {
-  // Loader close
-  const loader = document.getElementById('loader');
-  if (loader) {
-    // Force reflow so transition works even if element was display:block before
-    loader.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-    loader.style.transform = 'translateY(0)'; // ensure it starts from 0
+function hideLoaderWhenReady() {
+  let checks = 0;
+  const maxChecks = 100; // safety limit (~1.6s at 60fps)
 
-    // Trigger animation after a tiny delay (ensures model/environment is ready)
-    requestAnimationFrame(() => {
-      loader.style.transform = 'translateY(-100%)';
+  function check() {
+    checks++;
 
-      // Once animation ends → remove from DOM flow
-      loader.addEventListener('transitionend', function handler() {
-        loader.style.display = 'none';
-        loader.removeEventListener('transitionend', handler);
+    // Condition 1: Model is loaded
+    // Condition 2: At least one frame has been rendered (canvas has content)
+    const canvas = renderer.domElement;
+    const hasContent = canvas && canvas.offsetHeight > 0; // canvas is in DOM and visible
+    const modelReady = !!model; // model exists (even fallback cube counts)
+
+    if (modelReady && hasContent && checks < maxChecks) {
+      // Optional: wait one extra frame so first render is complete
+      requestAnimationFrame(() => {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          loader.style.transition =
+            'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          loader.style.transform = 'translateY(-100%)';
+
+          loader.addEventListener('transitionend', function handler() {
+            loader.style.display = 'none';
+            loader.removeEventListener('transitionend', handler);
+          });
+        }
       });
-    });
+    } else if (checks < maxChecks) {
+      requestAnimationFrame(check);
+    } else {
+      // Fallback: force hide after timeout (in case something went wrong)
+      const loader = document.getElementById('loader');
+      if (loader) loader.style.display = 'none';
+    }
   }
-  console.log('Page Loaded.');
+
+  requestAnimationFrame(check);
 }
 
 init();
 animate();
-pageLoaded();
+hideLoaderWhenReady();
