@@ -286,26 +286,6 @@ function init() {
   scene.add(ground);
 
   window.addEventListener('resize', onWindowResize);
-
-  // Loader close
-  const loader = document.getElementById('loader');
-  if (loader) {
-    // Force reflow so transition works even if element was display:block before
-    loader.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-    loader.style.transform = 'translateY(0)'; // ensure it starts from 0
-
-    // Trigger animation after a tiny delay (ensures model/environment is ready)
-    requestAnimationFrame(() => {
-      loader.style.transform = 'translateY(-100%)';
-
-      // Once animation ends → remove from DOM flow
-      loader.addEventListener('transitionend', function handler() {
-        loader.style.display = 'none';
-        loader.removeEventListener('transitionend', handler);
-      });
-    });
-  }
-  console.log('Page Loaded.');
 }
 
 function animate() {
@@ -345,5 +325,28 @@ function onWindowResize() {
   }
 }
 
+function pageLoaded() {
+  // Loader close
+  const loader = document.getElementById('loader');
+  if (loader) {
+    // Force reflow so transition works even if element was display:block before
+    loader.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    loader.style.transform = 'translateY(0)'; // ensure it starts from 0
+
+    // Trigger animation after a tiny delay (ensures model/environment is ready)
+    requestAnimationFrame(() => {
+      loader.style.transform = 'translateY(-100%)';
+
+      // Once animation ends → remove from DOM flow
+      loader.addEventListener('transitionend', function handler() {
+        loader.style.display = 'none';
+        loader.removeEventListener('transitionend', handler);
+      });
+    });
+  }
+  console.log('Page Loaded.');
+}
+
 init();
 animate();
+pageLoaded();
