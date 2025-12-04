@@ -37,7 +37,7 @@ const cameraViews = {
   },
   'camera-view-3': {
     position: new THREE.Vector3(15, 3, -6),
-    target: new THREE.Vector3(0, 0.5, 0),
+    target: new THREE.Vector3(0, 1, 0),
   },
 };
 
