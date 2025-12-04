@@ -1,27 +1,31 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/DRACOLoader.js';
 import { EXRLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/EXRLoader.js';
 import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/RenderPass.js';
 import { OutputPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/OutputPass.js';
 import { GTAOPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/GTAOPass.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/controls/OrbitControls.js';
+import Stats from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/libs/stats.module.js';
 
 // Expose to window
 window.THREE = THREE;
 window.GLTFLoader = GLTFLoader;
+window.DRACOLoader = DRACOLoader;
 window.EXRLoader = EXRLoader;
 window.EffectComposer = EffectComposer;
 window.RenderPass = RenderPass;
 window.OutputPass = OutputPass;
 window.GTAOPass = GTAOPass;
-window.OrbitControls = OrbitControls;
+window.Stats = Stats;
 window.gsap = gsap;
 
 // Global variables
-let scene, camera, renderer, model, composer, controls;
+let scene, camera, renderer, model, composer;
+let cameraTarget;
 let mixer, clock;
 let isCubeFallback = false;
+let stats;
 
 const container = document.getElementById('scene-container');
 
@@ -68,15 +72,16 @@ function setupCameraControls() {
         y: view.position.y,
         z: view.position.z,
         ease: 'power2.inOut',
-        onUpdate: () => camera.updateProjectionMatrix(),
+        onUpdate: () => camera.lookAt(cameraTarget),
       });
 
-      gsap.to(controls.target, {
+      gsap.to(cameraTarget, {
         duration: 1.5,
         x: view.target.x,
         y: view.target.y,
         z: view.target.z,
         ease: 'power2.inOut',
+        onUpdate: () => camera.lookAt(cameraTarget),
       });
     });
   });
@@ -104,10 +109,19 @@ function setupColorControls() {
 }
 
 function loadModel() {
+  // Previous plain GLTF loading (kept for reference):
+  // const loader = new GLTFLoader();
+  // loader.load(modelPath, onLoad, onProgress, onError);
+
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+
   const loader = new GLTFLoader();
-  const modelPath =
-    'https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb';
-  // const modelPath = 'assets/gltf/2048/tensaur.gltf';
+  loader.setDRACOLoader(dracoLoader);
+
+  // const modelPath =
+  //   'https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb';
+  const modelPath = 'assets/draco/draco_trimmed.glb';
 
   loader.load(
     modelPath,
@@ -181,6 +195,7 @@ function init() {
 
   const aspect = container.clientWidth / container.clientHeight;
   const initialView = cameraViews['camera-view-1'];
+  cameraTarget = initialView.target.clone();
 
   // ---------- FIX FOV ON LOAD ----------
   const isMobile = window.innerWidth <= 1024;
@@ -188,7 +203,7 @@ function init() {
 
   camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
   camera.position.copy(initialView.position);
-  camera.lookAt(initialView.target);
+  camera.lookAt(cameraTarget);
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
@@ -203,10 +218,15 @@ function init() {
   renderer.autoClear = false; // Required for EffectComposer
 
   container.appendChild(renderer.domElement);
+  if (!container.style.position) container.style.position = 'relative';
 
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.copy(initialView.target);
-  controls.enableDamping = true;
+  stats = new Stats();
+  stats.dom.style.position = 'absolute';
+  stats.dom.style.top = '8px';
+  stats.dom.style.left = '8px';
+  stats.dom.style.zIndex = 10;
+  stats.dom.style.pointerEvents = 'none';
+  container.appendChild(stats.dom);
 
   // Post-processing setup with GTAO
   const renderSize = new THREE.Vector2();
@@ -288,20 +308,22 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
+  if (stats) stats.begin();
 
   if (mixer) mixer.update(delta);
   else if (model && isCubeFallback && params.enableCubeRotation) {
     model.rotation.x += 0.005;
     model.rotation.y += 0.01;
   }
-
-  if (controls) controls.update();
+  if (cameraTarget) camera.lookAt(cameraTarget);
 
   if (composer) {
     composer.render();
   } else {
     renderer.render(scene, camera);
   }
+
+  if (stats) stats.end();
 }
 
 function onWindowResize() {
