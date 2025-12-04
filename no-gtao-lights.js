@@ -110,7 +110,7 @@ function loadModel() {
   loader.setDRACOLoader(dracoLoader);
 
   const modelPath =
-    'https://bunqlabs.github.io/eyecandy/assets/draco/draco_trimmed.glb';
+    'https://bunqlabs.github.io/eyecandy/assets/DRACO/draco_trimmed.glb';
   // const modelPath = 'assets/draco/draco_trimmed.glb';
 
   loader.load(
