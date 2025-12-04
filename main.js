@@ -5,6 +5,7 @@ import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examp
 import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/RenderPass.js';
 import { OutputPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/OutputPass.js';
 import { GTAOPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/GTAOPass.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/controls/OrbitControls.js';
 
 // Expose to window
 window.THREE = THREE;
@@ -14,10 +15,11 @@ window.EffectComposer = EffectComposer;
 window.RenderPass = RenderPass;
 window.OutputPass = OutputPass;
 window.GTAOPass = GTAOPass;
+window.OrbitControls = OrbitControls;
 window.gsap = gsap;
 
 // Global variables
-let scene, camera, renderer, model, composer;
+let scene, camera, renderer, model, composer, controls;
 let mixer, clock;
 let isCubeFallback = false;
 
@@ -105,7 +107,7 @@ function loadModel() {
   const loader = new GLTFLoader();
   const modelPath =
     'https://bunqlabs.github.io/eyecandy/assets/gltf_export_trimmed_materials_baked_lights.glb';
-  // const modelPath = 'assets/gltf_export_trimmed_materials_baked_lights.glb';
+  // const modelPath = 'assets/gltf/2048/tensaur.gltf';
 
   loader.load(
     modelPath,
@@ -202,6 +204,10 @@ function init() {
 
   container.appendChild(renderer.domElement);
 
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.copy(initialView.target);
+  controls.enableDamping = true;
+
   // Post-processing setup with GTAO
   const renderSize = new THREE.Vector2();
   renderer.getSize(renderSize);
@@ -289,6 +295,8 @@ function animate() {
     model.rotation.y += 0.01;
   }
 
+  if (controls) controls.update();
+
   if (composer) {
     composer.render();
   } else {
@@ -329,7 +337,7 @@ function hideLoaderWhenReady() {
     const modelReady = !!model; // model exists (even fallback cube counts)
 
     // Once the model is loaded, set progress to 100%
-    if (modelReady && progressBar.style.width !== '100%') {
+    if (modelReady && progressBar && progressBar.style.width !== '100%') {
       progressBar.style.width = '100%';
     }
 
