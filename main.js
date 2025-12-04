@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/GLTFLoader.js';
 import { EXRLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/EXRLoader.js';
 import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/postprocessing/EffectComposer.js';
@@ -9,7 +8,6 @@ import { GTAOPass } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/js
 
 // Expose to window
 window.THREE = THREE;
-window.OrbitControls = OrbitControls;
 window.GLTFLoader = GLTFLoader;
 window.EXRLoader = EXRLoader;
 window.EffectComposer = EffectComposer;
@@ -19,7 +17,7 @@ window.GTAOPass = GTAOPass;
 window.gsap = gsap;
 
 // Global variables
-let scene, camera, renderer, model, controls, composer;
+let scene, camera, renderer, model, composer;
 let mixer, clock;
 let isCubeFallback = false;
 
@@ -62,8 +60,6 @@ function setupCameraControls() {
       const view = cameraViews[button.id];
       if (!view) return;
 
-      controls.enabled = false;
-
       gsap.to(camera.position, {
         duration: 1.5,
         x: view.position.x,
@@ -71,9 +67,6 @@ function setupCameraControls() {
         z: view.position.z,
         ease: 'power2.inOut',
         onUpdate: () => camera.updateProjectionMatrix(),
-        onComplete: () => {
-          controls.enabled = true;
-        },
       });
 
       gsap.to(controls.target, {
@@ -82,7 +75,6 @@ function setupCameraControls() {
         y: view.target.y,
         z: view.target.z,
         ease: 'power2.inOut',
-        onUpdate: () => controls.update(),
       });
     });
   });
@@ -272,14 +264,6 @@ function init() {
   hemiLight.position.set(0, 20, 0);
   scene.add(hemiLight);
 
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.minDistance = 2;
-  controls.maxDistance = 20;
-  controls.target.copy(initialView.target);
-  controls.update();
-
   setupCameraControls();
   setupColorControls();
 
@@ -299,7 +283,6 @@ function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
 
-  if (controls) controls.update();
   if (mixer) mixer.update(delta);
   else if (model && isCubeFallback && params.enableCubeRotation) {
     model.rotation.x += 0.005;
