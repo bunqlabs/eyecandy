@@ -1,13 +1,11 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/loaders/DRACOLoader.js';
-import Stats from 'https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/libs/stats.module.js';
 
 // Expose to window
 window.THREE = THREE;
 window.GLTFLoader = GLTFLoader;
 window.DRACOLoader = DRACOLoader;
-window.Stats = Stats;
 window.gsap = gsap;
 
 // Global variables
@@ -15,7 +13,6 @@ let scene, camera, renderer, model;
 let cameraTarget;
 let mixer, clock;
 let isCubeFallback = false;
-let stats;
 
 const container = document.getElementById('scene-container');
 
@@ -198,15 +195,6 @@ function init() {
   renderer.shadowMap.enabled = false;
 
   container.appendChild(renderer.domElement);
-  if (!container.style.position) container.style.position = 'relative';
-
-  stats = new Stats();
-  stats.dom.style.position = 'absolute';
-  stats.dom.style.top = '8px';
-  stats.dom.style.left = '8px';
-  stats.dom.style.zIndex = 10;
-  stats.dom.style.pointerEvents = 'none';
-  container.appendChild(stats.dom);
 
   loadModel();
 
@@ -223,7 +211,6 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
-  if (stats) stats.begin();
 
   if (mixer) mixer.update(delta);
   else if (model && isCubeFallback && params.enableCubeRotation) {
@@ -233,8 +220,6 @@ function animate() {
   if (cameraTarget) camera.lookAt(cameraTarget);
 
   renderer.render(scene, camera);
-
-  if (stats) stats.end();
 }
 
 function onWindowResize() {
