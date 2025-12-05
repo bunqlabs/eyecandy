@@ -46,12 +46,24 @@ function setupCameraControls() {
     document.getElementById('camera-view-1'),
     document.getElementById('camera-view-2'),
     document.getElementById('camera-view-3'),
-  ];
+  ].filter(Boolean);
+
+  if (!buttons.length) return;
+
+  const setActiveButton = (activeButton) => {
+    buttons.forEach((button) => {
+      button.classList.toggle('selected', button === activeButton);
+    });
+  };
+
+  setActiveButton(buttons[0]);
 
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
       const view = cameraViews[button.id];
       if (!view) return;
+
+      setActiveButton(button);
 
       gsap.to(camera.position, {
         duration: 1.5,
